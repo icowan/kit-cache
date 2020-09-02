@@ -19,7 +19,7 @@ var logger log.Logger
 
 func NewSvc() Service {
 	logger = log.NewLogfmtLogger(log.StdlibWriter{})
-	rds, err := redisclient.NewRedisClient("10.143.252.47:6479,10.143.252.47:6489,10.143.252.47:6499,10.143.252.57:6399,10.143.252.57:6379,10.143.252.57:6389", "123456", "test:", 0)
+	rds, err := redisclient.NewRedisClient("127.0.0.1:6379", "", "test:", 0)
 	if err != nil {
 		panic(err)
 	}
