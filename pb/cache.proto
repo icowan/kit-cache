@@ -21,4 +21,5 @@ message SetRequest {
 }
 
 message Response {
+    string data = 1;
 }

@@ -60,7 +60,7 @@ func MakeGRPCHandler(logger log.Logger, s Service, dmw []endpoint.Middleware, op
 			opts...,
 		),
 		set: grpc.NewServer(
-			eps.GetEndpoint,
+			eps.SetEndpoint,
 			decodeGRPCSetRequest,
 			encodeResponse,
 			opts...,
@@ -90,6 +90,13 @@ func decodeGRPCSetRequest(_ context.Context, r interface{}) (interface{}, error)
 }
 
 func encodeResponse(_ context.Context, r interface{}) (interface{}, error) {
+	resp, ok := r.(string)
+	if !ok {
+		resp = ""
+	}
+
 	var err error
-	return &pb.Response{}, err
+	return &pb.Response{
+		Data: resp,
+	}, err
 }
