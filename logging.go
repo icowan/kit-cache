@@ -56,6 +56,19 @@ func (s *loggingServer) Set(ctx context.Context, key string, val interface{}, ex
 	return s.Service.Set(ctx, key, val, exp)
 }
 
+func (s *loggingServer) Del(ctx context.Context, key string) (err error) {
+	defer func(begin time.Time) {
+		_ = s.logger.Log(
+			s.requestId, ctx.Value(s.requestId),
+			"method", "Del",
+			"key", key,
+			"took", time.Since(begin),
+			"err", err,
+		)
+	}(time.Now())
+	return s.Service.Del(ctx, key)
+}
+
 func (s *loggingServer) GetCall(ctx context.Context, key string, call GetCall, exp time.Duration, data interface{}) (err error) {
 	defer func(begin time.Time) {
 		_ = s.logger.Log(
