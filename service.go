@@ -5,7 +5,7 @@
  * @Software: GoLand
  */
 
-package cache
+package kitcache
 
 import (
 	"context"
