@@ -41,3 +41,31 @@ func (s *loggingServer) Get(ctx context.Context, key string, data interface{}) (
 	}(time.Now())
 	return s.Service.Get(ctx, key, data)
 }
+
+func (s *loggingServer) Set(ctx context.Context, key string, val interface{}, exp time.Duration) (err error) {
+	defer func(begin time.Time) {
+		_ = s.logger.Log(
+			s.requestId, ctx.Value(s.requestId),
+			"method", "Set",
+			"key", key,
+			"exp", exp,
+			"took", time.Since(begin),
+			"err", err,
+		)
+	}(time.Now())
+	return s.Service.Set(ctx, key, val, exp)
+}
+
+func (s *loggingServer) GetCall(ctx context.Context, key string, call GetCall, exp time.Duration, data interface{}) (err error) {
+	defer func(begin time.Time) {
+		_ = s.logger.Log(
+			s.requestId, ctx.Value(s.requestId),
+			"method", "GetCall",
+			"key", key,
+			"exp", exp,
+			"took", time.Since(begin),
+			"err", err,
+		)
+	}(time.Now())
+	return s.Service.GetCall(ctx, key, call, exp, data)
+}
