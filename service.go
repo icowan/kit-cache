@@ -53,7 +53,7 @@ type service struct {
 
 func (s *service) Del(ctx context.Context, key string) (err error) {
 	logger := log.With(s.logger, s.requestId, ctx.Value(s.requestId))
-	if err = s.rds.Del(key); err != nil {
+	if err = s.rds.Del(ctx, key); err != nil {
 		_ = level.Error(logger).Log("rds", "Del", "err", err.Error())
 		return err
 	}
@@ -62,7 +62,7 @@ func (s *service) Del(ctx context.Context, key string) (err error) {
 
 func (s *service) Get(ctx context.Context, key string, data interface{}) (res string, err error) {
 	logger := log.With(s.logger, s.requestId, ctx.Value(s.requestId))
-	res, err = s.rds.Get(key)
+	res, err = s.rds.Get(ctx, key)
 	if err != nil {
 		_ = level.Error(logger).Log("rds", "Get", "err", err.Error())
 		return
@@ -75,7 +75,7 @@ func (s *service) Get(ctx context.Context, key string, data interface{}) (res st
 
 func (s *service) Set(ctx context.Context, key string, v interface{}, exp time.Duration) (err error) {
 	logger := log.With(s.logger, s.requestId, ctx.Value(s.requestId))
-	err = s.rds.Set(key, v, exp)
+	err = s.rds.Set(ctx, key, v, exp)
 	if err != nil {
 		_ = level.Error(logger).Log("rds", "Set", "err", err.Error())
 	}
@@ -85,7 +85,7 @@ func (s *service) Set(ctx context.Context, key string, v interface{}, exp time.D
 func (s *service) GetCall(ctx context.Context, key string, call GetCall, exp time.Duration, data interface{}) (err error) {
 	logger := log.With(s.logger, s.requestId, ctx.Value(s.requestId))
 
-	resp, err := s.rds.Get(key)
+	resp, err := s.rds.Get(ctx, key)
 	if err != nil {
 		_ = level.Warn(logger).Log("rds", "Get", "key", key, "err", err.Error())
 	}
@@ -103,7 +103,7 @@ func (s *service) GetCall(ctx context.Context, key string, call GetCall, exp tim
 	b, _ := json.Marshal(result)
 	_ = json.Unmarshal(b, &data)
 
-	err = s.rds.Set(key, data, exp)
+	err = s.rds.Set(ctx, key, data, exp)
 
 	return err
 
