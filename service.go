@@ -63,14 +63,30 @@ func (s *service) Get(ctx context.Context, key string, data interface{}) (res st
 }
 
 func (s *service) Set(ctx context.Context, key string, v interface{}, exp time.Duration) (err error) {
-	err = s.rds.Set(ctx, key, v, exp).Err()
+	var val string
+	switch v.(type) {
+	case string:
+		val = v.(string)
+	default:
+		b, _ := json.Marshal(v)
+		val = string(b)
+	}
+	err = s.rds.Set(ctx, key, val, exp).Err()
 	return
 }
 
 func (s *service) GetCall(ctx context.Context, key string, call GetCall, exp time.Duration, data interface{}) (err error) {
 	resp := s.rds.Get(ctx, key).Val()
 	if resp != "" {
-		err = json.Unmarshal([]byte(resp), &data)
+		if data != nil {
+			switch data.(type) {
+			case string:
+				data = resp
+			default:
+				err = json.Unmarshal([]byte(resp), &data)
+			}
+			return err
+		}
 		return
 	}
 
@@ -83,9 +99,7 @@ func (s *service) GetCall(ctx context.Context, key string, call GetCall, exp tim
 	b, _ := json.Marshal(result)
 	_ = json.Unmarshal(b, &data)
 
-	err = s.rds.Set(ctx, key, data, exp).Err()
-
-	return err
+	return s.Set(ctx, key, data, exp)
 
 }
 
