@@ -32,7 +32,7 @@ func MakeHTTPHandler(logger kitlog.Logger, s Service, dmw []endpoint.Middleware,
 
 	ems = append(ems, dmw...)
 
-	s = NewLoggingServer(logger, s, requestId)
+	s = NewLogging(logger, requestId)(s)
 
 	eps := NewEndpoint(s, map[string][]endpoint.Middleware{
 		"Get":     ems,

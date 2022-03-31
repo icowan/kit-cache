@@ -44,7 +44,7 @@ func MakeGRPCHandler(logger log.Logger, s Service, dmw []endpoint.Middleware, op
 
 	ems = append(ems, dmw...)
 
-	s = NewLoggingServer(logger, s, requestId)
+	s = NewLogging(logger, requestId)(s)
 	eps := NewEndpoint(s, map[string][]endpoint.Middleware{
 		"Get":     ems,
 		"Set":     ems,
