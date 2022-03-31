@@ -10,7 +10,6 @@ package kitcache
 import (
 	"context"
 	"github.com/go-kit/kit/log"
-	redisclient "github.com/icowan/redis-client"
 	"testing"
 	"time"
 )
@@ -19,11 +18,11 @@ var logger log.Logger
 
 func NewSvc() Service {
 	logger = log.NewLogfmtLogger(log.StdlibWriter{})
-	rds, err := redisclient.NewRedisClient("127.0.0.1:32679", "123456", "test:", 0, nil)
-	if err != nil {
-		panic(err)
-	}
-	return New(rds)
+	//rds, err := redisclient.NewRedisClient("127.0.0.1:32679", "123456", "test:", 0, nil)
+	//if err != nil {
+	//	panic(err)
+	//}
+	return New(nil)
 }
 
 func TestService_Get(t *testing.T) {
